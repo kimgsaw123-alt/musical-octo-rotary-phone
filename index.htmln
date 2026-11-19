@@ -1,0 +1,1719 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NÓMADA CONCEPT — Juega y Gana</title>
+    <!-- Tailwind CSS para diseño adaptable y utilidades modernas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tipografía Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Variables de diseño oscuro y dorado para NÓMADA CONCEPT */
+        :root {
+            --bg-obsidian: #070709;
+            --gold-primary: #f59e0b;
+            --gold-bright: #fcd34d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-obsidian);
+            background-image:
+                radial-gradient(circle at 12% 10%, rgba(245, 158, 11, 0.24) 0%, transparent 42%),
+                radial-gradient(circle at 88% 16%, rgba(251, 191, 36, 0.15) 0%, transparent 46%),
+                radial-gradient(circle at 50% 85%, rgba(217, 119, 6, 0.14) 0%, transparent 54%),
+                linear-gradient(165deg, #070709 0%, #0e0d12 48%, #070709 100%);
+            background-attachment: fixed;
+            color: #f9fafb;
+            overflow-x: hidden;
+            margin: 0;
+            position: relative;
+        }
+
+        /* Textura sutil de cuadrícula dorada */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.28;
+            background-image:
+                linear-gradient(to right, rgba(251, 191, 36, 0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(251, 191, 36, 0.06) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: radial-gradient(ellipse at 50% 25%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0.25) 85%);
+        }
+
+        header, main, footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .luxury-card {
+            background: linear-gradient(155deg, rgba(26, 24, 32, 0.94) 0%, rgba(11, 11, 16, 0.98) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.18);
+            box-shadow: inset 0 1px 0 rgba(254, 243, 199, 0.08), 0 18px 40px -22px rgba(0, 0, 0, 0.88);
+        }
+
+        .gold-shadow {
+            box-shadow: 0 14px 34px -12px rgba(245, 158, 11, 0.45);
+        }
+
+        @keyframes slotPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+            }
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 0 22px 2px rgba(245, 158, 11, 0.24);
+            }
+        }
+
+        .slot-ready {
+            animation: slotPulse 2.2s infinite ease-in-out;
+        }
+
+        /* Ocultar flechas nativas en entradas de PIN */
+        .pin-digit::-webkit-outer-spin-button,
+        .pin-digit::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .pin-digit[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-400 selection:text-zinc-950">
+    <!-- Barra superior con marca, navegación rápida, sesión de cliente y acceso administrador -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-zinc-950/90 border-b border-amber-400/15">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button id="btnBackNav" type="button" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs sm:text-sm font-semibold text-zinc-100 transition flex items-center gap-1.5" aria-label="Atrás">
+                    <span>←</span>
+                    <span>Atrás</span>
+                </button>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 text-zinc-950 font-black flex items-center justify-center text-lg shadow-lg">
+                        N
+                    </div>
+                    <div>
+                        <div class="text-sm sm:text-base font-black tracking-tight leading-none">
+                            NÓMADA <span class="text-amber-400">CONCEPT</span>
+                        </div>
+                        <div id="topSessionLabel" class="text-xs sm:text-sm text-amber-300 font-bold mt-0.5">
+                            Cliente Invitado
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <button id="btnNavCatalog" type="button" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs sm:text-sm font-semibold transition">
+                    Catálogo
+                </button>
+                <button id="btnNavGame" type="button" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs sm:text-sm font-semibold transition">
+                    Juega y Gana
+                </button>
+                <button id="btnNavReviews" type="button" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs sm:text-sm font-semibold transition">
+                    Reseñas
+                </button>
+                <button id="btnOpenCartDrawer" type="button" class="px-3 py-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/40 text-amber-300 text-xs sm:text-sm font-bold transition flex items-center gap-1.5">
+                    <span>Carrito</span>
+                    <span id="headerCartBadge" class="px-1.5 py-0.5 rounded-full bg-amber-400 text-zinc-950 text-xs font-black">0</span>
+                </button>
+                <button id="btnOpenSessionModal" type="button" class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-white/15 text-xs sm:text-sm font-semibold transition">
+                    Iniciar sesión
+                </button>
+                <button id="btnLogoutSession" type="button" class="hidden px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/35 text-rose-300 text-xs sm:text-sm font-semibold transition">
+                    Cerrar sesión
+                </button>
+                <button id="btnOpenAdminPanel" type="button" class="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 text-xs sm:text-sm font-extrabold transition">
+                    Admin
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Notificación flotante no intrusiva -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 hidden max-w-sm rounded-2xl bg-zinc-900 border border-amber-400/50 text-amber-100 px-4 py-3 shadow-2xl text-xs sm:text-sm font-semibold">
+    </div>
+
+    <!-- Banner de error límite de aplicación -->
+    <div id="globalErrorBanner" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-6 pt-4">
+        <div class="rounded-2xl bg-rose-950/80 border border-rose-400/40 px-4 py-3 text-xs sm:text-sm text-rose-100 flex items-center justify-between gap-3">
+            <span id="globalErrorMessage">Se detectó una incidencia menor; la página sigue operativa.</span>
+            <button id="btnDismissError" type="button" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 font-bold text-xs">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-12">
+        <!-- Portada principal y calificación general -->
+        <section class="luxury-card rounded-3xl p-5 sm:p-8 md:p-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div class="lg:col-span-7 space-y-4">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/35 text-amber-300 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
+                        NÓMADA CONCEPT • Gafas y Ropa • Juega y Gana
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+                        Presencia en cada paso y <span class="text-amber-400">premios al comprar</span>.
+                    </h1>
+                    <p class="text-sm sm:text-base text-zinc-200 leading-relaxed max-w-2xl">
+                        Tu estilo habla antes de que digas una palabra. Explora gafas al aire con degradados de exhibición y prendas NÓMADA CONCEPT creadas para acompañarte en tus planes diarios, viajes y salidas especiales. Elige tu modelo favorito o arma tu carrito y, al pasar a <strong class="text-amber-300">Juega y Gana</strong>, gira la tragamonedas y abre uno de los 3 sobres sorpresa para obtener tu código <strong class="text-amber-300">NOM-XXXX</strong>.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-1">
+                        <a href="#catalogSection" class="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-xs sm:text-sm transition gold-shadow">
+                            Ver catálogo
+                        </a>
+                        <button id="btnHeroPlayGame" type="button" class="px-5 py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 border border-white/15 text-white font-bold text-xs sm:text-sm transition">
+                            Ir a Juega y Gana
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Puntaje general de la página y líneas de WhatsApp -->
+                <div class="lg:col-span-5 bg-zinc-950/85 border border-white/10 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-zinc-400">Puntaje general de la página</span>
+                        <span id="pageScoreDisplay" class="text-base font-black text-amber-400">5.0 ★ (9 votos)</span>
+                    </div>
+                    <p class="text-xs text-zinc-400">Califica la experiencia de NÓMADA CONCEPT de 1 a 5 estrellas:</p>
+                    <div class="flex items-center gap-2">
+                        <button type="button" data-page-score="1" class="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-amber-400/20 border border-white/10 text-amber-400 font-black text-lg transition">★</button>
+                        <button type="button" data-page-score="2" class="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-amber-400/20 border border-white/10 text-amber-400 font-black text-lg transition">★</button>
+                        <button type="button" data-page-score="3" class="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-amber-400/20 border border-white/10 text-amber-400 font-black text-lg transition">★</button>
+                        <button type="button" data-page-score="4" class="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-amber-400/20 border border-white/10 text-amber-400 font-black text-lg transition">★</button>
+                        <button type="button" data-page-score="5" class="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-amber-400/20 border border-white/10 text-amber-400 font-black text-lg transition">★</button>
+                    </div>
+                    <div class="pt-3 border-t border-white/10 grid grid-cols-2 gap-3 text-center">
+                        <div class="rounded-xl bg-zinc-900 p-3 border border-amber-400/15">
+                            <div class="text-[11px] text-zinc-400">Gafas Nómada</div>
+                            <div class="text-xs sm:text-sm font-extrabold text-amber-300 mt-0.5">310 604 7749</div>
+                        </div>
+                        <div class="rounded-xl bg-zinc-900 p-3 border border-amber-400/15">
+                            <div class="text-[11px] text-zinc-400">Ropas Nómada</div>
+                            <div class="text-xs sm:text-sm font-extrabold text-amber-300 mt-0.5">312 414 8578</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catálogo ilimitado de Gafas Nómada y Ropas Nómada -->
+        <section id="catalogSection" class="space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight">Catálogo NÓMADA CONCEPT</h2>
+                    <p class="text-xs sm:text-sm text-zinc-400">Toca cualquier foto para ampliarla, califica cada artículo o pasa a Comprar / Juega y Gana.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" data-cat-filter="ALL" class="cat-filter-btn px-4 py-2 rounded-xl bg-amber-400 text-zinc-950 text-xs font-extrabold transition">
+                        Todos
+                    </button>
+                    <button type="button" data-cat-filter="GAFAS" class="cat-filter-btn px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-bold transition">
+                        Gafas Nómada
+                    </button>
+                    <button type="button" data-cat-filter="ROPA" class="cat-filter-btn px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-bold transition">
+                        Ropas Nómada
+                    </button>
+                </div>
+            </div>
+
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Productos renderizados dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Comunidad, Reseñas con foto de cómo quedó el artículo y Buzón de mejoras -->
+        <section id="reviewsSection" class="luxury-card rounded-3xl p-5 sm:p-7 space-y-6">
+            <div class="border-b border-white/10 pb-4">
+                <h2 class="text-xl sm:text-2xl font-black">Reseñas de Clientes y Buzón de Mejoras</h2>
+                <p class="text-xs sm:text-sm text-zinc-400">Lee experiencias reales, publica tu calificación y foto de cómo te quedó el artículo, o envía sugerencias de mejora.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Formulario de reseña + foto de cómo quedó el artículo -->
+                <form id="commentForm" class="lg:col-span-6 bg-zinc-950/85 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-3.5">
+                    <h3 class="text-base font-extrabold text-amber-300">Publicar reseña y foto de cómo quedó el artículo</h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-zinc-400 mb-1">Nombre y Apellido</label>
+                            <input id="commentAuthorInput" type="text" placeholder="Ej. Mariana Vélez" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-zinc-400 mb-1">Artículo</label>
+                            <select id="commentProductSelect" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                                <!-- Opciones cargadas desde el catálogo -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Calificación del artículo</label>
+                        <select id="commentRatingSelect" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                            <option value="5" selected>5 estrellas — Excelente</option>
+                            <option value="4">4 estrellas — Muy bueno</option>
+                            <option value="3">3 estrellas — Bueno</option>
+                            <option value="2">2 estrellas — Regular</option>
+                            <option value="1">1 estrella — Por mejorar</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Comentario</label>
+                        <textarea id="commentTextInput" rows="2" placeholder="Cuéntanos cómo te quedó el artículo y qué te pareció..." class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Foto de cómo quedó el artículo (desde galería)</label>
+                        <input id="commentPhotoInput" type="file" accept="image/*" class="w-full text-xs text-zinc-300 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-400 file:text-zinc-950 hover:file:bg-amber-300 cursor-pointer">
+                        <div id="commentPhotoPreviewBox" class="mt-2.5 hidden">
+                            <img id="commentPhotoPreviewImg" src="" alt="Vista previa de cómo quedó el artículo" class="w-24 h-24 object-cover rounded-xl border border-amber-400/40">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-sm transition">
+                        Publicar reseña
+                    </button>
+                </form>
+
+                <!-- Buzón de mejoras -->
+                <form id="mailboxForm" class="lg:col-span-6 bg-zinc-950/85 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-3.5 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <h3 class="text-base font-extrabold text-amber-300">Buzón de mejoras</h3>
+                        <p class="text-xs text-zinc-400">Envía ideas o sugerencias para hacer aún mejor la tienda y la experiencia Juega y Gana.</p>
+                        <div>
+                            <label class="block text-xs text-zinc-400 mb-1">Tu sugerencia</label>
+                            <textarea id="mailboxTextInput" rows="4" placeholder="Escribe aquí qué te gustaría ver o mejorar..." class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-white/15 text-white font-bold text-sm transition">
+                        Enviar al buzón de mejoras
+                    </button>
+                </form>
+            </div>
+
+            <!-- Modal unificado: Juega y Gana (Tragamonedas + 3 Sobres NOM-XXXX) -> Formulario Final WhatsApp -->
+    <div id="flowOverlay" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+        <div class="max-w-2xl w-full bg-zinc-900 border border-amber-400/30 rounded-3xl p-5 sm:p-7 space-y-6 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-400">NÓMADA CONCEPT</span>
+                    <h3 id="flowModalTitle" class="text-lg sm:text-xl font-black">Juega y Gana</h3>
+                </div>
+                <button id="btnCloseFlowModal" type="button" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold">
+                    Cerrar ✕
+                </button>
+            </div>
+
+            <!-- Paso 1: Tragamonedas de 3 carretes + 3 Sobres Sorpresa NOM-XXXX -->
+            <div id="stepGameBox" class="space-y-5">
+                <div class="bg-zinc-950 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4">
+                    <p class="text-xs text-zinc-400 text-center">1. Gira la tragamonedas para habilitar los 3 sobres sorpresa</p>
+                    <div class="grid grid-cols-3 gap-2.5 sm:gap-4 text-center">
+                        <div id="slotReelA" class="py-5 rounded-2xl bg-zinc-900 border border-amber-400/30 text-2xl sm:text-3xl font-black text-amber-300">🕶️</div>
+                        <div id="slotReelB" class="py-5 rounded-2xl bg-zinc-900 border border-amber-400/30 text-2xl sm:text-3xl font-black text-amber-300">✨</div>
+                        <div id="slotReelC" class="py-5 rounded-2xl bg-zinc-900 border border-amber-400/30 text-2xl sm:text-3xl font-black text-amber-300">🎁</div>
+                    </div>
+                    <button id="btnSpinSlotMachine" type="button" class="w-full py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-sm transition slot-ready">
+                        Girar Tragamonedas
+                    </button>
+                </div>
+
+                <div class="space-y-2.5">
+                    <p class="text-xs text-zinc-400 text-center">2. Elige 1 de los 3 sobres para revelar tu código NOM-XXXX y premio</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button type="button" data-envelope-index="1" class="surprise-envelope py-6 rounded-2xl bg-zinc-950 border border-white/15 hover:border-amber-400 transition flex flex-col items-center justify-center gap-1.5 opacity-55 cursor-not-allowed">
+                            <span class="text-2xl">✉️</span>
+                            <span class="text-xs font-extrabold text-amber-300">Sobre 1</span>
+                        </button>
+                        <button type="button" data-envelope-index="2" class="surprise-envelope py-6 rounded-2xl bg-zinc-950 border border-white/15 hover:border-amber-400 transition flex flex-col items-center justify-center gap-1.5 opacity-55 cursor-not-allowed">
+                            <span class="text-2xl">✉️</span>
+                            <span class="text-xs font-extrabold text-amber-300">Sobre 2</span>
+                        </button>
+                        <button type="button" data-envelope-index="3" class="surprise-envelope py-6 rounded-2xl bg-zinc-950 border border-white/15 hover:border-amber-400 transition flex flex-col items-center justify-center gap-1.5 opacity-55 cursor-not-allowed">
+                            <span class="text-2xl">✉️</span>
+                            <span class="text-xs font-extrabold text-amber-300">Sobre 3</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="wonPrizeBox" class="hidden rounded-2xl bg-amber-400/15 border border-amber-400/50 p-4 text-center space-y-3">
+                    <div class="text-xs font-extrabold uppercase tracking-wider text-amber-300">¡Premio desbloqueado!</div>
+                    <div id="wonPrizeSummary" class="text-base sm:text-lg font-black text-white"></div>
+                    <button id="btnProceedClaimForm" type="button" class="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-sm transition">
+                        Continuar al formulario final →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 2: Formulario final de reclamación y envío a WhatsApp -->
+            <form id="claimOrderForm" class="hidden space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Nombre *</label>
+                        <input id="claimFirstNameField" type="text" required placeholder="Ej. Andrés" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Apellido *</label>
+                        <input id="claimLastNameField" type="text" required placeholder="Ej. Restrepo" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">WhatsApp *</label>
+                        <input id="claimWhatsappField" type="tel" required placeholder="Ej. 3005551234" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Unidades *</label>
+                        <input id="claimUnitsField" type="number" min="1" value="1" required class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Premio ganado</label>
+                        <input id="claimPrizeField" type="text" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-950 border border-amber-400/45 text-amber-300 font-bold text-sm">
+                    </div>
+                </div>
+
+                <!-- Elección de entrega: Solicitar domicilio o Recoger personalmente -->
+                <div class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 space-y-3">
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-zinc-300">Modalidad de entrega *</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-900 border border-white/10 cursor-pointer text-xs sm:text-sm font-semibold">
+                            <input type="radio" name="claimDeliveryMode" value="DOMICILIO" checked class="accent-amber-400">
+                            <span>Solicitar domicilio</span>
+                        </label>
+                        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-900 border border-white/10 cursor-pointer text-xs sm:text-sm font-semibold">
+                            <input type="radio" name="claimDeliveryMode" value="RECOGER" class="accent-amber-400">
+                            <span>Recoger personalmente</span>
+                        </label>
+                    </div>
+
+                    <div id="domicilioFieldsContainer" class="space-y-3 pt-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-zinc-400 mb-1">Carrera / Calle *</label>
+                                <input id="domStreet" type="text" placeholder="Ej. Carrera 43A # 14-50" class="w-full px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-zinc-400 mb-1">Barrio *</label>
+                                <input id="domNeighborhood" type="text" placeholder="Ej. El Poblado" class="w-full px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-zinc-400 mb-1">Casa o Apartamento *</label>
+                                <input id="domHomeUnit" type="text" placeholder="Ej. Apartamento 804 / Casa" class="w-full px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-zinc-400 mb-1">Conjunto residencial</label>
+                                <select id="domComplexType" class="w-full px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                                    <option value="No aplica">No aplica</option>
+                                    <option value="Abierto">Abierto</option>
+                                    <option value="Cerrado">Cerrado</option>
+                                    <option value="Privado">Privado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-zinc-400 mb-1">Notas para el domiciliario</label>
+                            <input id="domNotes" type="text" placeholder="Torre, portería, timbre o indicaciones adicionales..." class="w-full px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                        </div>
+                    </div>
+
+                    <div id="recogerInfoBox" class="hidden rounded-xl bg-amber-400/10 border border-amber-400/30 p-3 text-xs text-amber-200">
+                        Seleccionaste <strong>Recoger personalmente</strong>. El vendedor te enviará la dirección por WhatsApp.
+                    </div>
+                </div>
+
+                <!-- Destino WhatsApp: Gafas Nómada (573106047749) o Ropas Nómada (573124148578) -->
+                <div class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 space-y-2.5">
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-zinc-300">Enviar a WhatsApp *</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-900 border border-white/10 cursor-pointer text-xs sm:text-sm font-bold">
+                            <input type="radio" name="claimSellerChannel" value="GAFAS" class="accent-amber-400">
+                            <span>Gafas Nómada (3106047749)</span>
+                        </label>
+                        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-zinc-900 border border-white/10 cursor-pointer text-xs sm:text-sm font-bold">
+                            <input type="radio" name="claimSellerChannel" value="ROPA" class="accent-amber-400">
+                            <span>Ropas Nómada (3124148578)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-sm transition shadow-lg">
+                    Enviar por WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Panel Administrador (PIN 1980) -->
+    <div id="adminPanelOverlay" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+        <div class="max-w-3xl w-full bg-zinc-900 border border-amber-400/30 rounded-3xl p-5 sm:p-6 space-y-6 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-400">Gestión Ilimitada</span>
+                    <h3 class="text-lg sm:text-xl font-black">Panel de Administración</h3>
+                </div>
+                <button id="btnCloseAdminPanel" type="button" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold">
+                    Cerrar ✕
+                </button>
+            </div>
+
+            <!-- Crear o editar artículo con subida real desde galería -->
+            <form id="adminProductForm" class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-3.5">
+                <div class="flex items-center justify-between">
+                    <h4 id="adminFormHeading" class="text-sm sm:text-base font-extrabold text-amber-300">Agregar nuevo artículo</h4>
+                    <button id="btnCancelEditProduct" type="button" class="hidden text-xs text-zinc-400 hover:text-white underline">
+                        Cancelar edición
+                    </button>
+                </div>
+                <input id="adminEditProductId" type="hidden">
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Nombre *</label>
+                        <input id="adminProdName" type="text" required placeholder="Ej. Gafas Nómada Rimless" class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Categoría *</label>
+                        <select id="adminProdCategory" class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                            <option value="GAFAS">GAFAS</option>
+                            <option value="ROPA">ROPA</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Precio (COP) *</label>
+                        <input id="adminProdPrice" type="number" min="1000" step="500" required placeholder="95000" class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">Descripción *</label>
+                    <input id="adminProdDesc" type="text" required placeholder="Detalles del modelo, material o estilo" class="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">Foto desde galería</label>
+                    <input id="adminProdPhotoInput" type="file" accept="image/*" class="w-full text-xs text-zinc-300 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-400 file:text-zinc-950 hover:file:bg-amber-300 cursor-pointer">
+                    <div id="adminProdPreviewWrap" class="mt-2.5 hidden">
+                        <img id="adminProdPreviewImg" src="" alt="Vista previa del artículo" class="w-24 h-24 object-cover rounded-xl border border-amber-400/40">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-sm transition">
+                    Guardar artículo
+                </button>
+  </form><!-- Premios de Juega y Gana -->
+            <div class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-3">
+                <h4 class="text-sm sm:text-base font-extrabold text-amber-300">Premios de Juega y Gana</h4>
+                <div class="flex gap-2">
+                    <input id="newPrizeInput" type="text" placeholder="Nuevo premio (ej. Envío gratis)" class="flex-1 px-3 py-2 rounded-xl bg-zinc-900 border border-white/10 text-sm focus:outline-none focus:border-amber-400">
+                    <button id="btnAddPrize" type="button" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-extrabold text-xs sm:text-sm transition">
+                        Agregar
+                    </button>
+                </div>
+                <div id="adminPrizesList" class="flex flex-wrap gap-2">
+                    <!-- Lista de premios -->
+                </div>
+            </div>
+
+            <!-- Catálogo actual en administración -->
+            <div class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-3">
+                <h4 class="text-sm sm:text-base font-extrabold text-white">Artículos publicados</h4>
+                <div id="adminProductsList" class="space-y-2.5">
+                    <!-- Filas de productos -->
+                </div>
+            </div>
+
+            <!-- Reseñas y Buzón de mejoras -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 space-y-2.5">
+                    <h4 class="text-sm font-extrabold text-amber-300">Reseñas de clientes</h4>
+                    <div id="adminCommentsSummary" class="space-y-2 text-xs text-zinc-300 max-h-48 overflow-y-auto">
+                        <!-- Reseñas -->
+                    </div>
+                </div>
+                <div class="bg-zinc-950/85 border border-white/10 rounded-2xl p-4 space-y-2.5">
+                    <h4 class="text-sm font-extrabold text-amber-300">Buzón de mejoras</h4>
+                    <div id="adminMailboxSummary" class="space-y-2 text-xs text-zinc-300 max-h-48 overflow-y-auto">
+                        <!-- Mejoras -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // Destinos oficiales de WhatsApp por línea
+            const SELLER_WHATSAPP = {
+                GAFAS: '573106047749',
+                ROPA: '573124148578'
+            };
+
+            // PIN de 4 dígitos para acceder al panel de administración
+            const ADMIN_PIN = '1980';
+
+            const LOCAL_STORAGE_KEY = 'nomada_concept_single_v1';
+            const IDB_NAME = 'NomadaConceptSingleDB';
+            const IDB_STORE = 'snapshots';
+
+            const DEFAULT_CATALOG = [
+                {
+                    id: 'prod-rimless-degrade',
+                    name: 'Gafas Nómada Rimless Degradé & Estuche',
+                    category: 'GAFAS',
+                    price: 118000,
+                    description: 'Diseño sin montura con puente dorado, lentes degradados en tonos ámbar, humo y azul, con estuche de lujo.',
+                    image: 'https://placehold.co/640x480/1a1418/f59e0b?text=Rimless+Degrade+%26+Estuche'
+                },
+                {
+                    id: 'prod-gafas-solaris',
+                    name: 'Gafas Nómada Solaris Gold',
+                    category: 'GAFAS',
+                    price: 94000,
+                    description: 'Protección UV400 con acabado metálico dorado y ajuste cómodo para uso prolongado.',
+                    image: 'https://placehold.co/640x480/14141b/fbbf24?text=Solaris+Gold'
+                },
+                {
+                    id: 'prod-gafas-onix',
+                    name: 'Gafas Nómada Ónix Polarizadas',
+                    category: 'GAFAS',
+                    price: 89000,
+                    description: 'Lentes polarizados antireflejo en tono oscuro con estructura ligera y firme.',
+                    image: 'https://placehold.co/640x480/14141b/f9fafb?text=Onix+Polarizadas'
+                },
+                {
+                    id: 'prod-ropa-camiseta-oro',
+                    name: 'Camiseta Nómada Oro Clásico',
+                    category: 'ROPA',
+                    price: 79000,
+                    description: 'Algodón peinado de tacto suave con corte moderno y detalle bordado en tono oro.',
+                    image: 'https://placehold.co/640x480/14141b/f59e0b?text=Camiseta+Oro+Clasico'
+                },
+                {
+                    id: 'prod-ropa-buzo-noche',
+                    name: 'Buzo Nómada Noche Urbana',
+                    category: 'ROPA',
+                    price: 139000,
+                    description: 'Prenda de abrigo con capucha, excelente caída y acabados resistentes.',
+                    image: 'https://placehold.co/640x480/14141b/e5e7eb?text=Buzo+Noche+Urbana'
+                }
+            ];
+
+            const DEFAULT_PRIZES = [
+                'Envío gratis en tu compra',
+                '15% de descuento en tu próximo pedido',
+                'Paño de microfibra NÓMADA de obsequio',
+                'Bono de $25.000 COP para tu próxima compra'
+            ];
+
+            const INITIAL_REVIEWS = [
+                {
+                    id: 'rev-1',
+                    author: 'Valentina Restrepo',
+                    productName: 'Gafas Nómada Rimless Degradé & Estuche',
+                    rating: 5,
+                    text: 'El estilo sin montura con el degradado y el estuche se ven increíbles. ¡Me gané envío gratis en los sobres!',
+                    photo: '',
+                    date: 'Hace 1 día'
+                },
+                {
+                    id: 'rev-2',
+                    author: 'Mateo Castaño',
+                    productName: 'Gafas Nómada Solaris Gold',
+                    rating: 5,
+                    text: 'Súper cómodas y livianas para todo el día. La coordinación por WhatsApp fue rápida y clara.',
+                    photo: '',
+                    date: 'Hace 2 días'
+                },
+                {
+                    id: 'rev-3',
+                    author: 'Isabella Arango',
+                    productName: 'Camiseta Nómada Oro Clásico',
+                    rating: 5,
+                    text: 'La tela es de excelente calidad, no pierde la horma y el detalle dorado luce muy elegante.',
+                    photo: '',
+                    date: 'Hace 3 días'
+                },
+                {
+                    id: 'rev-4',
+                    author: 'Sebastián Tobón',
+                    productName: 'Buzo Nómada Noche Urbana',
+                    rating: 5,
+                    text: 'Muy abrigado y con excelente caída. Me quedó perfecto para las salidas de noche.',
+                    photo: '',
+                    date: 'Hace 4 días'
+                },
+                {
+                    id: 'rev-5',
+                    author: 'Mariana Zuluaga',
+                    productName: 'Gafas Nómada Rimless Degradé & Estuche',
+                    rating: 5,
+                    text: 'El degradado combina con todo y el estuche protege las gafas de maravilla.',
+                    photo: '',
+                    date: 'Hace 5 días'
+                },
+                {
+                    id: 'rev-6',
+                    author: 'Juan David Mejía',
+                    productName: 'Gafas Nómada Ónix Polarizadas',
+                    rating: 5,
+                    text: 'Reducen muy bien el reflejo del sol y tienen un ajuste firme sin incomodar.',
+                    photo: '',
+                    date: 'Hace 6 días'
+                },
+                {
+                    id: 'rev-7',
+                    author: 'Salomé Cardona',
+                    productName: 'Camiseta Nómada Oro Clásico',
+                    rating: 5,
+                    text: 'Me encantó girar la tragamonedas y abrir el sobre sorpresa al finalizar mi compra.',
+                    photo: '',
+                    date: 'Hace 1 semana'
+                },
+                {
+                    id: 'rev-8',
+                    author: 'Tomás Giraldo',
+                    productName: 'Buzo Nómada Noche Urbana',
+                    rating: 5,
+                    text: 'Pedí a domicilio y llegó impecable. Muy buena presentación y atención.',
+                    photo: '',
+                    date: 'Hace 1 semana'
+                },
+                {
+                    id: 'rev-9',
+                    author: 'Daniela Bedoya',
+                    productName: 'Gafas Nómada Solaris Gold',
+                    rating: 5,
+                    text: 'Un diseño que resalta con facilidad y eleva cualquier outfit diario.',
+                    photo: '',
+                    date: 'Hace 2 semanas'
+                }
+            ];
+
+            let appState = {
+                products: DEFAULT_CATALOG.slice(),
+                prizes: DEFAULT_PRIZES.slice(),
+                cart: [],
+                session: {
+                    role: 'GUEST', // 'GUEST' | 'CLIENT' | 'ADMIN'
+                    fullName: '',
+                    phone: ''
+                },
+                pageRatings: [5, 5, 5, 5, 5, 5, 5, 5, 5],
+                productRatings: {
+                    'prod-rimless-degrade': [5, 5, 5, 5, 5],
+                    'prod-gafas-solaris': [5, 5, 5, 5, 5],
+                    'prod-gafas-onix': [5, 5, 5, 4, 5],
+                    'prod-ropa-camiseta-oro': [5, 5, 5, 5, 5],
+                    'prod-ropa-buzo-noche': [5, 5, 5, 5, 5]
+                },
+                comments: INITIAL_REVIEWS.slice(),
+                improvements: [],
+                filter: 'ALL'
+            };
+
+            let activeFlowItems = [];
+            let slotSpun = false;
+            let envelopeOpened = false;
+            let currentPrizeText = '';
+            let currentPrizeCode = '';
+            let uploadedCommentPhoto = '';
+            let uploadedProductPhoto = '';
+            let idbHandle = null;
+
+            function reportError(errMsg) {
+                const banner = document.getElementById('globalErrorBanner');
+                const textEl = document.getElementById('globalErrorMessage');
+                if (banner && textEl) {
+                    textEl.textContent = errMsg || 'Ocurrió un inconveniente menor en la interfaz.';
+                    banner.classList.remove('hidden');
+                }
+            }
+
+            function showToast(msg) {
+                const el = document.getElementById('toastNotification');
+                if (!el) return;
+                el.textContent = msg;
+                el.classList.remove('hidden');
+                clearTimeout(showToast._timer);
+                showToast._timer = setTimeout(() => {
+                    el.classList.add('hidden');
+                }, 3200);
+            }
+
+            function formatCOP(amount) {
+                const num = Number(amount) || 0;
+                return '$' + num.toLocaleString('es-CO');
+            }
+
+            function escapeHTML(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            function hydrateState(incoming) {
+                if (!incoming || typeof incoming !== 'object') return;
+                appState = {
+                    ...appState,
+                    ...incoming,
+                    session: {
+                        role: 'GUEST',
+                        fullName: '',
+                        phone: '',
+                        ...(incoming.session || {})
+                    }
+                };
+                if (!Array.isArray(appState.products) || !appState.products.length) {
+                    appState.products = DEFAULT_CATALOG.slice();
+                }
+                if (!Array.isArray(appState.prizes) || !appState.prizes.length) {
+                    appState.prizes = DEFAULT_PRIZES.slice();
+                }
+                if (!Array.isArray(appState.cart)) appState.cart = [];
+                if (!Array.isArray(appState.pageRatings)) appState.pageRatings = [5, 5, 5, 5, 5, 5, 5, 5, 5];
+                if (!appState.productRatings || typeof appState.productRatings !== 'object') appState.productRatings = {};
+                if (!Array.isArray(appState.comments) || !appState.comments.length) {
+                    appState.comments = INITIAL_REVIEWS.slice();
+                }
+                if (!Array.isArray(appState.improvements)) appState.improvements = [];
+            }
+
+            function openIDB() {
+                return new Promise((resolve) => {
+                    if (!('indexedDB' in window)) return resolve(null);
+                    try {
+                        const req = indexedDB.open(IDB_NAME, 1);
+                        req.onupgradeneeded = function (ev) {
+                            const db = ev.target.result;
+                            if (!db.objectStoreNames.contains(IDB_STORE)) {
+                                db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+                            }
+                        };
+                        req.onsuccess = function (ev) {
+                            idbHandle = ev.target.result;
+                            resolve(idbHandle);
+                        };
+                        req.onerror = function () {
+                            resolve(null);
+                        };
+                    } catch (_) {
+                        resolve(null);
+                    }
+                });
+            }
+
+            async function loadPersistedData() {
+                try {
+                    const savedLocal = localStorage.getItem(LOCAL_STORAGE_KEY);
+                    if (savedLocal) hydrateState(JSON.parse(savedLocal));
+                } catch (err) {
+                    console.warn('localStorage no disponible:', err);
+                }
+
+                try {
+                    const db = await openIDB();
+                    if (db) {
+                        await new Promise((resolve) => {
+                            const tx = db.transaction(IDB_STORE, 'readonly');
+                            const req = tx.objectStore(IDB_STORE).get('state_v1');
+                            req.onsuccess = function () {
+                                if (req.result && req.result.payload) {
+                                    hydrateState(req.result.payload);
+                                }
+                                resolve();
+                            };
+                            req.onerror = function () {
+                                resolve();
+                            };
+                        });
+                    }
+                } catch (err) {
+                    console.warn('IndexedDB no disponible:', err);
+                }
+            }
+
+            function savePersistedData() {
+                try {
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
+                } catch (err) {
+                    console.warn('Error guardando en localStorage:', err);
+                }
+
+                if (idbHandle) {
+                    try {
+                        const tx = idbHandle.transaction(IDB_STORE, 'readwrite');
+                        tx.objectStore(IDB_STORE).put({ id: 'state_v1', payload: appState });
+                    } catch (err) {
+                        console.warn('Error guardando en IndexedDB:', err);
+                    }
+                }
+            }
+
+            // Compresión de imágenes desde galería a 800px de ancho máximo
+            function compressGalleryImage(file, maxWidth, callback) {
+                if (!file) return callback('');
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    const img = new Image();
+                    img.onload = function () {
+                        try {
+                            const limit = maxWidth || 800;
+                            const scale = img.width > limit ? limit / img.width : 1;
+                            const canvas = document.createElement('canvas');
+                            canvas.width = Math.max(1, Math.round(img.width * scale));
+                            canvas.height = Math.max(1, Math.round(img.height * scale));
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            callback(canvas.toDataURL('image/jpeg', 0.84));
+                        } catch (_) {
+                            callback(ev.target.result || '');
+                        }
+                    };
+                    img.onerror = function () {
+                        callback('');
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.onerror = function () {
+                    callback('');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function renderSessionBar() {
+                const label = document.getElementById('topSessionLabel');
+                const loginBtn = document.getElementById('btnOpenSessionModal');
+                const logoutBtn = document.getElementById('btnLogoutSession');
+
+                if (appState.session.role === 'CLIENT' && appState.session.fullName) {
+                    label.textContent = appState.session.fullName;
+                    loginBtn.classList.add('hidden');
+                    logoutBtn.classList.remove('hidden');
+                } else if (appState.session.role === 'ADMIN') {
+                    label.textContent = 'Administrador';
+                    loginBtn.classList.add('hidden');
+                    logoutBtn.classList.remove('hidden');
+                } else {
+                    label.textContent = 'Cliente Invitado';
+                    loginBtn.classList.remove('hidden');
+                    logoutBtn.classList.add('hidden');
+                }
+            }
+
+            function renderPageRating() {
+                const el = document.getElementById('pageScoreDisplay');
+                if (!el) return;
+                const list = appState.pageRatings;
+                if (!list.length) {
+                    el.textContent = '5.0 ★ (0 votos)';
+                    return;
+                }
+                const avg = (list.reduce((acc, n) => acc + n, 0) / list.length).toFixed(1);
+                el.textContent = `${avg} ★ (${list.length} ${list.length === 1 ? 'voto' : 'votos'})`;
+            }
+
+            function getProductRating(productId) {
+                const list = appState.productRatings[productId] || [];
+                if (!list.length) return { avg: '5.0', count: 0 };
+                const avg = (list.reduce((acc, n) => acc + n, 0) / list.length).toFixed(1);
+                return { avg, count: list.length };
+            }
+
+            function renderCatalog() {
+                const grid = document.getElementById('productGrid');
+                const commentSelect = document.getElementById('commentProductSelect');
+                if (!grid) return;
+
+                if (commentSelect) {
+                    commentSelect.innerHTML = appState.products
+                        .map(p => `<option value="${escapeHTML(p.name)}">${escapeHTML(p.name)}</option>`)
+                        .join('');
+                }
+
+                const filtered = appState.filter === 'ALL'
+                    ? appState.products
+                    : appState.products.filter(p => p.category === appState.filter);
+
+                if (!filtered.length) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-sm text-zinc-400">No hay artículos en esta categoríaFlujo unificado: Compra / Carrito -> Juega y Gana -> Formulario Final WhatsApp
+            function openUnifiedFlow(items) {
+                activeFlowItems = Array.isArray(items) && items.length
+                    ? items.map(i => ({ ...i }))
+                    : [{ ...appState.products[0], qty: 1 }];
+
+                slotSpun = false;
+                envelopeOpened = false;
+                currentPrizeText = '';
+                currentPrizeCode = '';
+
+                document.getElementById('slotReelA').textContent = '🕶️';
+                document.getElementById('slotReelB').textContent = '✨';
+                document.getElementById('slotReelC').textContent = '🎁';
+
+                document.querySelectorAll('.surprise-envelope').forEach((btn, idx) => {
+                    btn.classList.add('opacity-55', 'cursor-not-allowed');
+                    btn.innerHTML = `<span class="text-2xl">✉️</span><span class="text-xs font-extrabold text-amber-300">Sobre ${idx + 1}</span>`;
+                });
+
+                document.getElementById('wonPrizeBox').classList.add('hidden');
+                document.getElementById('stepGameBox').classList.remove('hidden');
+                document.getElementById('claimOrderForm').classList.add('hidden');
+                document.getElementById('flowModalTitle').textContent = 'Juega y Gana';
+                document.getElementById('flowOverlay').classList.remove('hidden');
+            }
+
+            function spinSlotReels() {
+                if (slotSpun) {
+                    showToast('Ya giraste la tragamonedas; abre uno de los 3 sobres.');
+                    return;
+                }
+                const symbols = ['🕶️', '👕', '✨', '🎁', '🔥'];
+                const rA = document.getElementById('slotReelA');
+                const rB = document.getElementById('slotReelB');
+                const rC = document.getElementById('slotReelC');
+
+                let ticks = 0;
+                const interval = setInterval(() => {
+                    ticks++;
+                    rA.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    rB.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    rC.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    if (ticks >= 10) {
+                        clearInterval(interval);
+                        rA.textContent = '🕶️';
+                        rB.textContent = '🎁';
+                        rC.textContent = '✨';
+                        slotSpun = true;
+
+                        document.querySelectorAll('.surprise-envelope').forEach(btn => {
+                            btn.classList.remove('opacity-55', 'cursor-not-allowed');
+                        });
+                        showToast('¡Tragamonedas lista! Selecciona 1 de los 3 sobres.');
+                    }
+                }, 70);
+            }
+
+            function pickSurpriseEnvelope(envNum) {
+                if (!slotSpun) {
+                    showToast('Primero gira la tragamonedas.');
+                    return;
+                }
+                if (envelopeOpened) {
+                    showToast('Ya abriste tu sobre sorpresa.');
+                    return;
+                }
+                envelopeOpened = true;
+                const pool = appState.prizes.length ? appState.prizes : DEFAULT_PRIZES;
+                currentPrizeText = pool[Math.floor(Math.random() * pool.length)];
+                currentPrizeCode = 'NOM-' + String(Math.floor(1000 + Math.random() * 9000));
+
+                const btn = document.querySelector(`.surprise-envelope[data-envelope-index="${envNum}"]`);
+                if (btn) {
+                    btn.innerHTML = `<span class="text-2xl">🎉</span><span class="text-[11px] font-black text-emerald-300">${currentPrizeCode}</span>`;
+                }
+
+                document.getElementById('wonPrizeSummary').textContent = `${currentPrizeCode} — ${currentPrizeText}`;
+                document.getElementById('wonPrizeBox').classList.remove('hidden');
+            }
+
+            function syncDeliveryUI() {
+                const selected = (document.querySelector('input[name="claimDeliveryMode"]:checked') || {}).value || 'DOMICILIO';
+                const domContainer = document.getElementById('domicilioFieldsContainer');
+                const pickBox = document.getElementById('recogerInfoBox');
+
+                if (selected === 'RECOGER') {
+                    domContainer.classList.add('hidden');
+                    pickBox.classList.remove('hidden');
+                } else {
+                    domContainer.classList.remove('hidden');
+                    pickBox.classList.add('hidden');
+                }
+            }
+
+            function openClaimFormStep() {
+                if (!currentPrizeCode || !currentPrizeText) {
+                    showToast('Abre uno de los sobres para obtener tu premio.');
+                    return;
+                }
+                document.getElementById('stepGameBox').classList.add('hidden');
+                document.getElementById('claimOrderForm').classList.remove('hidden');
+                document.getElementById('flowModalTitle').textContent = 'Finalizar pedido por WhatsApp';
+
+                document.getElementById('claimPrizeField').value = `${currentPrizeCode} — ${currentPrizeText}`;
+
+                if (appState.session.role === 'CLIENT' && appState.session.fullName) {
+                    const parts = appState.session.fullName.trim().split(/\s+/);
+                    document.getElementById('claimFirstNameField').value = parts[0] || '';
+                    document.getElementById('claimLastNameField').value = parts.slice(1).join(' ') || '';
+                }
+                if (appState.session.phone) {
+                    document.getElementById('claimWhatsappField').value = appState.session.phone;
+                }
+
+                const totalQty = activeFlowItems.reduce((sum, it) => sum + (it.qty || 1), 0);
+                document.getElementById('claimUnitsField').value = String(Math.max(1, totalQty));
+
+                const firstCat = (activeFlowItems[0] && activeFlowItems[0].category) || 'GAFAS';
+                const channelToSelect = firstCat === 'ROPA' ? 'ROPA' : 'GAFAS';
+                const radioChannel = document.querySelector(`input[name="claimSellerChannel"][value="${channelToSelect}"]`);
+                if (radioChannel) radioChannel.checked = true;
+
+                syncDeliveryUI();
+            }
+
+            function submitClaimForm(e) {
+                e.preventDefault();
+
+                const firstName = document.getElementById('claimFirstNameField').value.trim();
+                const lastName = document.getElementById('claimLastNameField').value.trim();
+                const whatsapp = document.getElementById('claimWhatsappField').value.trim();
+                const units = Math.max(1, parseInt(document.getElementById('claimUnitsField').value, 10) || 1);
+                const prize = document.getElementById('claimPrizeField').value.trim();
+                const deliveryMode = (document.querySelector('input[name="claimDeliveryMode"]:checked') || {}).value || 'DOMICILIO';
+                const sellerChannel = (document.querySelector('input[name="claimSellerChannel"]:checked') || {}).value || 'GAFAS';
+
+                if (!firstName || !lastName || !whatsapp) {
+                    showToast('Completa Nombre, Apellido y WhatsApp.');
+                    return;
+                }
+
+                let deliverySummary = '';
+                if (deliveryMode === 'DOMICILIO') {
+                    const street = document.getElementById('domStreet').value.trim();
+                    const neighborhood = document.getElementById('domNeighborhood').value.trim();
+                    const homeUnit = document.getElementById('domHomeUnit').value.trim();
+                    const complexType = document.getElementById('domComplexType').value;
+                    const notes = document.getElementById('domNotes').value.trim();
+
+                    if (!street || !neighborhood || !homeUnit) {
+                        showToast('Completa Carrera/Calle, Barrio y Casa o Apartamento.');
+                        return;
+                    }
+
+                    deliverySummary = [
+                        'Entrega: Solicitar domicilio',
+                        `Carrera/Calle: ${street}`,
+                        `Barrio: ${neighborhood}`,
+                        `Casa o Apartamento: ${homeUnit}`,
+                        `Conjunto residencial: ${complexType}`,
+                        notes ? `Notas para el domiciliario: ${notes}` : ''
+                    ].filter(Boolean).join('\n');
+                } else {
+                    deliverySummary = 'Entrega: Recoger personalmente (el vendedor enviará la dirección por WhatsApp).';
+                }
+
+                const itemsText = activeFlowItems
+                    .map(it => `• ${it.name} (${it.category}) x${it.qty || 1} — ${formatCOP((it.price || 0) * (it.qty || 1))}`)
+                    .join('\n');
+
+                const message = [
+                    '¡Hola NÓMADA CONCEPT! Quiero confirmar mi pedido:',
+                    `Nombre: ${firstName}`,
+                    `Apellido: ${lastName}`,
+                    `WhatsApp: ${whatsapp}`,
+                    `Unidades: ${units}`,
+                    `Premio: ${prize}`,
+                    itemsText ? `Artículos:\n${itemsText}` : '',
+                    deliverySummary
+                ].filter(Boolean).join('\n');
+
+                const targetPhone = sellerChannel === 'ROPA'
+                    ? SELLER_WHATSAPP.ROPA
+                    : SELLER_WHATSAPP.GAFAS;
+
+                const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+                document.getElementById('flowOverlay').classList.add('hidden');
+                showToast('Abriendo WhatsApp con el detalle de tu pedido...');
+            }
+
+            // 4 casillas de PIN del administrador con avance automático y retroceso
+            function initPinKeypad() {
+                const inputs = Array.from(document.querySelectorAll('#adminPinBoxes .pin-digit'));
+                inputs.forEach((box, idx) => {
+                    box.addEventListener('input', () => {
+                        box.value = box.value.replace(/\D/g, '').slice(0, 1);
+                        if (box.value && idx < inputs.length - 1) {
+                            inputs[idx + 1].focus();
+                        }
+                    });
+                    box.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !box.value && idx > 0) {
+                            inputs[idx - 1].focus();
+                        }
+                    });
+                });
+            }
+
+            function getPinCode() {
+                return Array.from(document.querySelectorAll('#adminPinBoxes .pin-digit'))
+                    .map(box => box.value)
+                    .join('');
+            }
+
+            function resetPinCode() {
+                Array.from(document.querySelectorAll('#adminPinBoxes .pin-digit'))
+                    .forEach(box => {
+                        box.value = '';
+                    });
+            }
+
+            function setSessionTab(mode) {
+                const tabClient = document.getElementById('modeTabClient');
+                const tabAdmin = document.getElementById('modeTabAdmin');
+                const formClient = document.getElementById('clientModeForm');
+                const formAdmin = document.getElementById('adminModeForm');
+
+                if (mode === 'ADMIN') {
+                    tabAdmin.className = 'py-2.5 rounded-xl bg-amber-400 text-zinc-950 font-extrabold text-xs sm:text-sm transition';
+                    tabClient.className = 'py-2.5 rounded-xl text-zinc-300 hover:text-white font-bold text-xs sm:text-sm transition';
+                    formAdmin.classList.remove('hidden');
+                    formClient.classList.add('hidden');
+                    const firstBox = document.querySelector('#adminPinBoxes .pin-digit');
+                    if (firstBox) setTimeout(() => firstBox.focus(), 40);
+                } else {
+                    tabClient.className = 'py-2.5 rounded-xl bg-amber-400 text-zinc-950 font-extrabold text-xs sm:text-sm transition';
+                    tabAdmin.className = 'py-2.5 rounded-xl text-zinc-300 hover:text-white font-bold text-xs sm:text-sm transition';
+                    formClient.classList.remove('hidden');
+                    formAdmin.classList.add('hidden');
+                }
+            }
+
+            function clearAdminProductForm() {
+                document.getElementById('adminEditProductId').value = '';
+                document.getElementById('adminFormHeading').textContent = 'Agregar nuevo artículo';
+                document.getElementById('btnCancelEditProduct').classList.add('hidden');
+                document.getElementById('adminProductForm').reset();
+                document.getElementById('adminProdPreviewWrap').classList.add('hidden');
+                uploadedProductPhoto = '';
+            }
+
+            function attachEvents() {
+                document.getElementById('btnDismissError').addEventListener('click', () => {
+                    document.getElementById('globalErrorBanner').classList.add('hidden');
+                });
+
+                document.getElementById('btnBackNav').addEventListener('click', () => {
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+
+                document.getElementById('btnNavCatalog').addEventListener('click', () => {
+                    document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
+                });
+
+                document.getElementById('btnNavGame').addEventListener('click', () => {
+                    openUnifiedFlow(appState.cart.length ? appState.cart : [{ ...appState.products[0], qty: 1 }]);
+                });
+
+                document.getElementById('btnHeroPlayGame').addEventListener('click', () => {
+                    openUnifiedFlow(appState.cart.length ? appState.cart : [{ ...appState.products[0], qty: 1 }]);
+                });
+
+                document.getElementById('btnNavReviews').addEventListener('click', () => {
+                    document.getElementById('reviewsSection').scrollIntoView({ behavior: 'smooth' });
+                });
+
+                // Puntaje general de la página
+                document.querySelectorAll('[data-page-score]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const val = parseInt(btn.getAttribute('data-page-score'), 10);
+                        if (val >= 1 && val <= 5) {
+                            appState.pageRatings.push(val);
+                            savePersistedData();
+                            renderPageRating();
+                            showToast(`¡Gracias! Calificaste la página con ${val} estrellas.`);
+                        }
+                    });
+                });
+
+                // Filtros del catálogo
+                document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        appState.filter = btn.getAttribute('data-cat-filter') || 'ALL';
+                        document.querySelectorAll('.cat-filter-btn').forEach(b => {
+                            b.className = 'cat-filter-btn px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-bold transition';
+                        });
+                        btn.className = 'cat-filter-btn px-4 py-2 rounded-xl bg-amber-400 text-zinc-950 text-xs font-extrabold transition';
+                        renderCatalog();
+                    });
+                });
+
+                // Interacciones en tarjetas de productos
+                document.getElementById('productGrid').addEventListener('click', (e) => {
+                    const zoomEl = e.target.closest('[data-open-lightbox]');
+                    if (zoomEl) {
+                        document.getElementById('lightboxPhoto').src = zoomEl.getAttribute('data-open-lightbox');
+                        document.getElementById('lightboxCaption').textContent = zoomEl.getAttribute('data-lightbox-title') || 'Vista ampliada';
+                        document.getElementById('lightboxOverlay').classList.remove('hidden');
+                        return;
+                    }
+
+                    const rateBtn = e.target.closest('[data-rate-item]');
+                    if (rateBtn) {
+                        const pid = rateBtn.getAttribute('data-rate-item');
+                        const score = parseInt(rateBtn.getAttribute('data-rate-val'), 10);
+                        if (!appState.productRatings[pid]) appState.productRatings[pid] = [];
+                        appState.productRatings[pid].push(score);
+                        savePersistedData();
+                        renderCatalog();
+                        showToast(`Calificaste el artículo con ${score} estrellas.`);
+                        return;
+                    }
+
+                    const cartBtn = e.target.closest('[data-add-to-cart]');
+                    if (cartBtn) {
+                        const pid = cartBtn.getAttribute('data-add-to-cart');
+                        const prod = appState.products.find(p => p.id === pid);
+                        if (!prod) return;
+                        const existing = appState.cart.find(c => c.id === pid);
+                        if (existing) existing.qty += 1;
+                        else appState.cart.push({ ...prod, qty: 1 });
+                        savePersistedData();
+                        renderCart();
+                        showToast(`"${prod.name}" agregado al carrito.`);
+                        return;
+                    }
+
+                    const buyBtn = e.target.closest('[data-buy-play]');
+                    if (buyBtn) {
+                        const pid = buyBtn.getAttribute('data-buy-play');
+                        const prod = appState.products.find(p => p.id === pid);
+                        if (!prod) return;
+                        openUnifiedFlow([{ ...prod, qty: 1 }]);
+                    }
+                });
+
+                document.getElementById('btnCloseLightbox').addEventListener('click', () => {
+                    document.getElementById('lightboxOverlay').classList.add('hidden');
+                });
+
+                // Sesión dividida Cliente / Administrador
+                document.getElementById('btnOpenSessionModal').addEventListener('click', () => {
+                    setSessionTab('CLIENT');
+                    document.getElementById('sessionOverlay').classList.remove('hidden');
+                });
+
+                document.getElementById('btnCloseSessionModal').addEventListener('click', () => {
+                    resetPinCode();
+                    document.getElementById('sessionOverlay').classList.add('hidden');
+                });
+
+                document.getElementById('modeTabClient').addEventListener('click', () => setSessionTab('CLIENT'));
+                document.getElementById('modeTabAdmin').addEventListener('click', () => setSessionTab('ADMIN'));
+
+                document.getElementById('clientModeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const first = document.getElementById('sessionFirstName').value.trim();
+                    const last = document.getElementById('sessionLastName').value.trim();
+                    const phone = document.getElementById('sessionPhone').value.trim()    // Puntaje general de la página
+                document.querySelectorAll('[data-page-score]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const val = parseInt(btn.getAttribute('data-page-score'), 10);
+                        if (val >= 1 && val <= 5) {
+                            appState.pageRatings.push(val);
+                            savePersistedData();
+                            renderPageRating();
+                            showToast(`¡Gracias! Calificaste la página con ${val} estrellas.`);
+                        }
+                    });
+                });
+
+                // Filtros del catálogo
+                document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        appState.filter = btn.getAttribute('data-cat-filter') || 'ALL';
+                        document.querySelectorAll('.cat-filter-btn').forEach(b => {
+                            b.className = 'cat-filter-btn px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-bold transition';
+                        });
+                        btn.className = 'cat-filter-btn px-4 py-2 rounded-xl bg-amber-400 text-zinc-950 text-xs font-extrabold transition';
+                        renderCatalog();
+                    });
+                });
+
+                // Interacciones en tarjetas de productos
+                document.getElementById('productGrid').addEventListener('click', (e) => {
+                    const zoomEl = e.target.closest('[data-open-lightbox]');
+                    if (zoomEl) {
+                        document.getElementById('lightboxPhoto').src = zoomEl.getAttribute('data-open-lightbox');
+                        document.getElementById('lightboxCaption').textContent = zoomEl.getAttribute('data-lightbox-title') || 'Vista ampliada';
+                        document.getElementById('lightboxOverlay').classList.remove('hidden');
+                        return;
+                    }
+
+                    const rateBtn = e.target.closest('[data-rate-item]');
+                    if (rateBtn) {
+                        const pid = rateBtn.getAttribute('data-rate-item');
+                        const score = parseInt(rateBtn.getAttribute('data-rate-val'), 10);
+                        if (!appState.productRatings[pid]) appState.productRatings[pid] = [];
+                        appState.productRatings[pid].push(score);
+                        savePersistedData();
+                        renderCatalog();
+                        showToast(`Calificaste el artículo con ${score} estrellas.`);
+                        return;
+                    }
+
+                    const cartBtn = e.target.closest('[data-add-to-cart]');
+                    if (cartBtn) {
+                        const pid = cartBtn.getAttribute('data-add-to-cart');
+                        const prod = appState.products.find(p => p.id === pid);
+                        if (!prod) return;
+                        const existing = appState.cart.find(c => c.id === pid);
+                        if (existing) existing.qty += 1;
+                        else appState.cart.push({ ...prod, qty: 1 });
+                        savePersistedData();
+                        renderCart();
+                        showToast(`"${prod.name}" agregado al carrito.`);
+                        return;
+                    }
+
+                    const buyBtn = e.target.closest('[data-buy-play]');
+                    if (buyBtn) {
+                        const pid = buyBtn.getAttribute('data-buy-play');
+                        const prod = appState.products.find(p => p.id === pid);
+                        if (!prod) return;
+                        openUnifiedFlow([{ ...prod, qty: 1 }]);
+                    }
+                });
+
+                document.getElementById('btnCloseLightbox').addEventListener('click', () => {
+                    document.getElementById('lightboxOverlay').classList.add('hidden');
+                });
+
+                // Sesión dividida Cliente / Administrador
+                document.getElementById('btnOpenSessionModal').addEventListener('click', () => {
+                    setSessionTab('CLIENT');
+                    document.getElementById('sessionOverlay').classList.remove('hidden');
+                });
+
+                document.getElementById('btnCloseSessionModal').addEventListener('click', () => {
+                    resetPinCode();
+                    document.getElementById('sessionOverlay').classList.add('hidden');
+                });
+
+                document.getElementById('modeTabClient').addEventListener('click', () => setSessionTab('CLIENT'));
+                document.getElementById('modeTabAdmin').addEventListener('click', () => setSessionTab('ADMIN'));
+
+                document.getElementById('clientModeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const first = document.getElementById('sessionFirstName').value.trim();
+                    const last = document.getElementById('sessionLastName').value.trim();
+                    const phone = document.getElementById('sessionPhone').value.trim();
+                    if (!first || !last) {
+                        showToast('Ingresa tu nombre y apellido.');
+                        return;
+                    }
+                    appState.session = {
+                        role: 'CLIENT',
+                        fullName: `${first} ${last}`,
+                        phone
+                    };
+                    savePersistedData();
+                    renderSessionBar();
+                    document.getElementById('sessionOverlay').classList.add('hidden');
+                    showToast(`Sesión iniciada: ${appState.session.fullName}`);
+                });
+
+                document.getElementById('adminModeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const pin = getPinCode();
+                    if (pin === ADMIN_PIN) {
+                        resetPinCode();
+                        appState.session = {
+                            role: 'ADMIN',
+                            fullName: 'Administrador',
+                            phone: ''
+                        };
+                        savePersistedData();
+                        renderSessionBar();
+                        document.getElementById('sessionOverlay').classList.add('hidden');
+                        clearAdminProductForm();
+                        renderAdminPanel();
+                        document.getElementById('adminPanelOverlay').classList.remove('hidden');
+                        showToast('Acceso de administrador habilitado.');
+                    } else {
+                        resetPinCode();
+                        const firstBox = document.querySelector('#adminPinBoxes .pin-digit');
+                        if (firstBox) firstBox.focus();
+                        showToast('PIN de 4 dígitos incorrecto.');
+                    }
+                });
+
+                document.getElementById('btnLogoutSession').addEventListener('click', () => {
+                    appState.session = { role: 'GUEST', fullName: '', phone: '' };
+                    savePersistedData();
+                    renderSessionBar();
+                    document.getElementById('adminPanelOverlay').classList.add('hidden');
+                    showToast('Sesión cerrada.');
+                });
+
+                // Carrito drawer
+                document.getElementById('btnOpenCartDrawer').addEventListener('click', () => {
+                    renderCart();
+                    document.getElementById('cartOverlay').classList.remove('hidden');
+                });
+
+                document.getElementById('btnCloseCartDrawer').addEventListener('click', () => {
+                    document.getElementById('cartOverlay').classList.add('hidden');
+                });
+
+                document.getElementById('cartListContainer').addEventListener('click', (e) => {
+                    const incId = e.target.getAttribute('data-cart-inc');
+                    const decId = e.target.getAttribute('data-cart-dec');
+                    const remId = e.target.getAttribute('data-cart-remove');
+
+                    if (incId) {
+                        const item = appState.cart.find(c => c.id === incId);
+                        if (item) item.qty += 1;
+                    } else if (decId) {
+                        const idx = appState.cart.findIndex(c => c.id === decId);
+                        if (idx > -1) {
+                            if (appState.cart[idx].qty > 1) appState.cart[idx].qty -= 1;
+                            else appState.cart.splice(idx, 1);
+                        }
+                    } else if (remId) {
+                        appState.cart = appState.cart.filter(c => c.id !== remId);
+                    }
+
+                    savePersistedData();
+                    renderCart();
+                });
+
+                document.getElementById('btnCartToGame').addEventListener('click', () => {
+                    if (!appState.cart.length) {
+                        showToast('Agrega al menos un artículo al carrito.');
+                        return;
+                    }
+                    document.getElementById('cartOverlay').classList.add('hidden');
+                    openUnifiedFlow(appState.cart);
+                });
+
+                // Flujo Juega y Gana + Formulario Final WhatsApp
+                document.getElementById('btnCloseFlowModal').addEventListener('click', () => {
+                    document.getElementById('flowOverlay').classList.add('hidden');
+                });
+
+                document.getElementById('btnSpinSlotMachine').addEventListener('click', spinSlotReels);
+
+                document.querySelectorAll('.surprise-envelope').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.getAttribute('data-envelope-index'), 10);
+                        pickSurpriseEnvelope(idx);
+                    });
+                });
+
+                document.getElementById('btnProceedClaimForm').addEventListener('click', openClaimFormStep);
+
+                document.querySelectorAll('input[name="claimDeliveryMode"]').forEach(radio => {
+                    radio.addEventListener('change', syncDeliveryUI);
+                });
+
+                document.getElementById('claimOrderForm').addEventListener('submit', submitClaimForm);
+
+                // Reseñas con foto de cómo quedó el artículo + Buzón de mejoras
+                document.getElementById('commentPhotoInput').addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    compressGalleryImage(file, 800, (compressed) => {
+                        uploadedCommentPhoto = compressed;
+                        const box = document.getElementById('commentPhotoPreviewBox');
+                        const img = document.getElementById('commentPhotoPreviewImg');
+                        if (compressed) {
+                            img.src = compressed;
+                            box.classList.remove('hidden');
+                        } else {
+                            box.classList.add('hidden');
+                        }
+                    });
+                });
+
+                document.getElementById('commentForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const typedAuthor = document.getElementById('commentAuthorInput').value.trim();
+                    const author = typedAuthor || (appState.session.fullName ? appState.session.fullName : 'Cliente Nómada');
+                    const productName = document.getElementById('commentProductSelect').value;
+                    const rating = parseInt(document.getElementById('commentRatingSelect').value, 10) || 5;
+                    const text = document.getElementById('commentTextInput').value.trim();
+
+                    if (!text) {
+                        showToast('Escribe tu comentario antes de publicar.');
+                        return;
+                    }
+
+                    appState.comments.unshift({
+                        id: 'rev-' + Date.now(),
+                        author,
+                        productName,
+                        rating,
+                        text,
+                        photo: uploadedCommentPhoto,
+                        date: 'Justo ahora'
+                    });
+
+                    const matchingProd = appState.products.find(p => p.name === productName);
+                    if (matchingProd) {
+                        if (!appState.productRatings[matchingProd.id]) appState.productRatings[matchingProd.id] = [];
+                        appState.productRatings[matchingProd.id].push(rating);
+                    }
+
+                    savePersistedData();
+                    renderCatalog();
+                    renderReviews();
+                    renderAdminPanel();
+
+                    document.getElementById('commentTextInput').value = '';
+                    document.getElementById('commentPhotoInput').value = '';
+                    document.getElementById('commentPhotoPreviewBox').classList.add('hidden');
+                    uploadedCommentPhoto = '';
+                    showToast('¡Reseña publicada!');
+                });
+
+                document.getElementById('commentsFeed').addEventListener('click', (e) => {
+                    const imgEl = e.target.closest('[data-open-lightbox]');
+                    if (imgEl) {
+                        document.getElementById('lightboxPhoto').src = imgEl.getAttribute('data-open-lightbox');
+                        document.getElementById('lightboxCaption').textContent = imgEl.getAttribute('data-lightbox-title') || 'Foto de cliente';
+                        document.getElementById('lightboxOverlay').classList.remove('hidden');
+                    }
+                });
+
+                document.getElementById('mailboxForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const text = document.getElementById('mailboxTextInput').value.trim();
+                    if (!text) {
+                        showToast('Escribe una sugerencia para el buzón de mejoras.');
+                        return;
+                    }
+                    appState.improvements.unshift({
+                        author: appState.session.fullName || 'Cliente',
+                        text
+                    });
+                    savePersistedData();
+                    renderAdminPanel();
+                    document.getElementById('mailboxTextInput').value = '';
+                    showToast('Sugerencia enviada al buzón de mejoras.');
+                });
+
+                // Panel Administrador (PIN 1980)
+                document.getElementById('btnOpenAdminPanel').addEventListener('click', () => {
+                    if (appState.session.role === 'ADMIN') {
+                        clearAdminProductForm();
+                        renderAdminPanel();
+                        document.getElementById('adminPanelOverlay').classList.remove('hidden');
+                    } else {
+                        setSessionTab('ADMIN');
+                        document.getElementById('sessionOverlay').classList.remove('hidden');
+                    }
+                });
+
+                document.getElementById('btnCloseAdminPanel').addEventListener('click', () => {
+                    document.getElementById('adminPanelOverlay').classList.add('hidden');
+                });
+
+                document.getElementById('adminProdPhotoInput').addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    compressGalleryImage(file, 800, (compressed) => {
+                        uploadedProductPhoto = compressed;
+                        const wrap = document.getElementById('adminProdPreviewWrap');
+                        const img = document.getElementById('adminProdPreviewImg');
+                        if (compressed) {
+                            img.src = compressed;
+                            wrap.classList.remove('hidden');
+                        } else {
+                            wrap.classList.add('hidden');
+                        }
+                    });
+                });
+
+                document.getElementById('btnCancelEditProduct').addEventListener('click', clearAdminProductForm);
+
+                document.getElementById('adminProductForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const editId = document.getElementById('adminEditProductId').value.trim();
+                    const name = document.getElementById('adminProdName').value.trim();
+                    const category = document.getElementById('adminProdCategory').value;
+                    const price = parseInt(document.getElementById('adminProdPrice').value, 10) || 0;
+                    const description = document.getElementById('adminProdDesc').value.trim();
+
+                    if (!name || !price || !description) {
+                        showToast('Completa nombre, precio y descripción.');
+                        return;
+                    }
+
+                    const fallbackImg = `https://placehold.co/640x480/14141b/fbbf24?text=${encodeURIComponent(name)}`;
+
+                    if (editId) {
+                        const idx = appState.products.findIndex(p => p.id === editId);
+                        if (idx > -1) {
+                            appState.products[idx] = {
+                                ...appState.products[idx],
+                                name,
+                                category,
+                                price,
+                                description,
+                                image: uploadedProductPhoto || appState.products[idx].image || fallbackImg
+                            };
+                            showToast('Artículo actualizado.');
+                        }
+                    } else {
+                        appState.products.unshift({
+                            id: 'prod-' + Date.now(),
+                            name,
+                            category,
+                            price,
+                            description,
+                            image: uploadedProductPhoto || fallbackImg
+                        });
+                        showToast('Artículo agregado al catálogo.');
+                    }
+
+                    savePersistedData();
+                    renderCatalog();
+                    renderAdminPanel();
+                    clearAdminProductForm();
+                });
+
+                document.getElementById('adminProductsList').addEventListener('click', (e) => {
+                    const editId = e.target.getAttribute('data-edit-product');
+                    const delId = e.target.getAttribute('data-delete-product');
+
+                    if (editId) {
+                        const prod = appState.products.find(p => p.id === editId);
+                        if (!prod) return;
+                        document.getElementById('adminEditProductId').value = prod.id;
+                        document.getElementById('adminFormHeading').textContent = 'Editar artículo';
+                        document.getElementById('btnCancelEditProduct').classList.remove('hidden');
+                        document.getElementById('adminProdName').value = prod.name;
+                        document.getElementById('adminProdCategory').value = prod.category;
+                        document.getElementById('adminProdPrice').value = prod.price;
+                        document.getElementById('adminProdDesc').value = prod.description;
+                        uploadedProductP
